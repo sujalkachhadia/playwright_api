@@ -38,8 +38,17 @@ const PORT = process.env.PORT || 3000;
 app.get('/scrape-n8n', authenticateToken, async (req, res) => {
     let browser;
     try {
-        // Launch a hidden Chrome browser
-        browser = await chromium.launch({ headless: true });
+        // Launch a hidden Chrome browser with Docker-friendly flags
+        browser = await chromium.launch({ 
+            headless: true,
+            args: [
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage',
+                '--disable-gpu',
+                '--single-process'
+            ]
+        });
         const page = await browser.newPage();
         
         // Go to the n8n integrations page
